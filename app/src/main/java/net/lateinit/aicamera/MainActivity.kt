@@ -11,9 +11,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.core.content.*
+import dagger.hilt.android.AndroidEntryPoint
 import net.lateinit.aicamera.ui.screen.*
 import java.util.concurrent.ExecutorService
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private val requestPermissionLauncher =
