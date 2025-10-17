@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "AICamera"
 include(":app")
- 
+include(":domain")
+include(":data")

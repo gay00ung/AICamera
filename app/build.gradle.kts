@@ -71,11 +71,5 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
 
     // Coroutines
-    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-
-    // TensorFlow Lite (AI 모델 실행)
-    implementation(libs.tensorflow.lite.task.vision)
-    implementation(libs.tensorflow.lite.gpu.delegate.plugin)
-    implementation(libs.tensorflow.lite.gpu)
 }
