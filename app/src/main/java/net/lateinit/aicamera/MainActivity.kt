@@ -1,47 +1,63 @@
 package net.lateinit.aicamera
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import net.lateinit.aicamera.ui.theme.AICameraTheme
+import android.*
+import android.content.pm.*
+import android.os.*
+import androidx.activity.*
+import androidx.activity.compose.*
+import androidx.activity.result.contract.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.core.content.*
+import net.lateinit.aicamera.ui.screen.*
 
 class MainActivity : ComponentActivity() {
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            isCameraPermissionGranted = isGranted
+        }
+    private var isCameraPermissionGranted by mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestCameraPermission()
+
         enableEdgeToEdge()
+
         setContent {
-            AICameraTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            if (isCameraPermissionGranted) {
+                CameraPreview(
+                    onPreviewViewCreated = { previewView ->
+                        // TODO: 여기에 카메라 로직을 연결할 예정
+                    }
+                )
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(text = "카메라 권한을 허용해주세요.")
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    private fun requestCameraPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                isCameraPermissionGranted = true
+            }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AICameraTheme {
-        Greeting("Android")
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
     }
 }
