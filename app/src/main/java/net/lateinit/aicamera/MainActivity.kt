@@ -2,6 +2,7 @@ package net.lateinit.aicamera
 
 import android.*
 import android.content.pm.*
+import android.graphics.Color
 import android.os.*
 import androidx.activity.*
 import androidx.activity.compose.*
@@ -37,7 +38,10 @@ class MainActivity : ComponentActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
         requestCameraPermission()
 
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
 
         setContent {
             val uiState by viewModel.uiState.collectAsState()

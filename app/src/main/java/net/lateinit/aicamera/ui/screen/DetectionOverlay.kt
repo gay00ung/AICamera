@@ -1,18 +1,16 @@
 package net.lateinit.aicamera.ui.screen
 
 import android.annotation.*
-import android.content.*
 import android.graphics.*
+import android.graphics.LinearGradient
 import android.graphics.Paint
-import android.hardware.display.*
-import android.view.*
+import android.graphics.Shader.TileMode
 import androidx.camera.view.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.*
 import net.lateinit.aicamera.domain.model.*
 import android.graphics.Color as AndroidColor
 
@@ -88,12 +86,16 @@ fun DetectionOverlay(
             )
 
             // 바운딩 박스 그리기
-            drawContext.canvas.nativeCanvas.drawRect(
+            drawContext.canvas.nativeCanvas.drawRoundRect(
                 drawRect,
+                24f, 24f,
                 Paint().apply {
-                    color = AndroidColor.CYAN
+                    shader = LinearGradient(
+                        drawRect.left, drawRect.top, drawRect.right, drawRect.bottom,
+                        AndroidColor.CYAN, AndroidColor.BLUE, TileMode.MIRROR
+                    )
                     style = Paint.Style.STROKE
-                    strokeWidth = 4f
+                    strokeWidth = 6f
                 }
             )
 
