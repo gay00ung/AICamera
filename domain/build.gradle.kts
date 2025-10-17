@@ -14,4 +14,11 @@ kotlin {
 dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
+
+    // Hilt
+    implementation(libs.dagger)
+    implementation(libs.hilt.core)
+
+    // JavaX Inject
+    implementation(libs.javax.inject)
 }
