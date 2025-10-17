@@ -12,8 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.core.content.*
 import net.lateinit.aicamera.ui.screen.*
+import java.util.concurrent.ExecutorService
 
 class MainActivity : ComponentActivity() {
+    private lateinit var cameraExecutor: ExecutorService
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             isCameraPermissionGranted = isGranted
@@ -29,11 +31,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             if (isCameraPermissionGranted) {
-                CameraPreview(
-                    onPreviewViewCreated = { previewView ->
-                        // TODO: 여기에 카메라 로직을 연결할 예정
-                    }
-                )
+                CameraPreview()
             } else {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -59,5 +57,10 @@ class MainActivity : ComponentActivity() {
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
     }
 }

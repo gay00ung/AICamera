@@ -4,6 +4,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+configurations.all {
+    // Keep TensorFlow Lite runtime and drop LiteRT duplicate classes
+    exclude(group = "com.google.ai.edge.litert", module = "litert-api")
+}
+
 android {
     namespace = "net.lateinit.aicamera"
     compileSdk = 36
