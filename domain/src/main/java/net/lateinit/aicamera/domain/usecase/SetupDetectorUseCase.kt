@@ -1,8 +1,9 @@
 package net.lateinit.aicamera.domain.usecase
 
 import net.lateinit.aicamera.domain.repository.ObjectDetectorRepository
+import javax.inject.Inject
 
-class SetupDetectorUseCase(
+class SetupDetectorUseCase @Inject constructor(
     private val repository: ObjectDetectorRepository
 ) {
     suspend operator fun invoke(

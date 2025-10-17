@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import android.os.*
 import android.util.*
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.flow.*
 import net.lateinit.aicamera.domain.model.BoxData
@@ -14,6 +15,7 @@ import org.tensorflow.lite.support.image.*
 import org.tensorflow.lite.support.image.ops.*
 import org.tensorflow.lite.task.core.*
 import org.tensorflow.lite.task.vision.detector.*
+import javax.inject.Inject
 import kotlin.Any
 import kotlin.Exception
 import kotlin.Float
@@ -23,8 +25,8 @@ import kotlin.Pair
 import kotlin.String
 import kotlin.to
 
-class ObjectDetectorRepositoryImpl(
-    private val context: Context
+class ObjectDetectorRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context
 ) : ObjectDetectorRepository {
     // TensorFlow Lite 객체 탐지기 인스턴스
     private var objectDetector: ObjectDetector? = null

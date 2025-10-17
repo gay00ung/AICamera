@@ -3,8 +3,9 @@ package net.lateinit.aicamera.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import net.lateinit.aicamera.domain.model.DetectionResult
 import net.lateinit.aicamera.domain.repository.ObjectDetectorRepository
+import javax.inject.Inject
 
-class DetectObjectsUseCase(
+class DetectObjectsUseCase @Inject constructor(
     private val repository: ObjectDetectorRepository
 ) {
     operator fun invoke(bitmap: Any, imageRotation: Int): Flow<Pair<List<DetectionResult>, Long>> {

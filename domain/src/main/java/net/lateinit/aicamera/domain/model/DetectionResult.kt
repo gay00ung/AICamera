@@ -21,4 +21,8 @@ data class BoxData(
     val left: Float,
     val bottom: Float,
     val right: Float
-)
+) {
+    val width: Float get() = right - left
+    val height: Float get() = bottom - top
+}
+

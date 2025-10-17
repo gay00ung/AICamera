@@ -21,13 +21,3 @@ abstract class RepositoryModule {
         impl: ObjectDetectorRepositoryImpl
     ): ObjectDetectorRepository
 }
-
-@Module
-@InstallIn(SingletonComponent::class)
-object ContextModule {
-    @Provides
-    @Singleton
-    fun provideContext(@ApplicationContext context: Context): Context {
-        return context
-    }
-}

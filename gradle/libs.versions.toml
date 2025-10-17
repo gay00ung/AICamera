@@ -20,6 +20,8 @@ tensorflowLiteTaskVision = "0.4.4"
 jetbrainsKotlinJvm = "2.2.20"
 appcompat = "1.7.1"
 material = "1.13.0"
+foundation = "1.9.3"
+runtime = "1.9.3"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -58,6 +60,8 @@ tensorflow-lite-gpu-delegate-plugin = { module = "org.tensorflow:tensorflow-lite
 tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

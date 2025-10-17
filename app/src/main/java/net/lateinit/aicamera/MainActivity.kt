@@ -6,41 +6,80 @@ import android.os.*
 import androidx.activity.*
 import androidx.activity.compose.*
 import androidx.activity.result.contract.*
+import androidx.compose.animation.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.unit.*
 import androidx.core.content.*
-import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.*
 import net.lateinit.aicamera.ui.screen.*
-import java.util.concurrent.ExecutorService
+import net.lateinit.aicamera.ui.viewmodel.*
+import java.util.concurrent.*
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var cameraExecutor: ExecutorService
+    private val viewModel: MainViewModel by viewModels()
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             isCameraPermissionGranted = isGranted
+            viewModel.onCameraPermissionResult(isGranted)
         }
     private var isCameraPermissionGranted by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        cameraExecutor = Executors.newSingleThreadExecutor()
         requestCameraPermission()
 
         enableEdgeToEdge()
 
         setContent {
-            if (isCameraPermissionGranted) {
-                CameraPreview()
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+            val uiState by viewModel.uiState.collectAsState()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                if (uiState.isCameraPermissionGranted) {
+                    CameraScreen(
+                        onImageAnalyzed = { bitmap, rotation ->
+                            viewModel.onBitmapAnalyzed(bitmap, rotation)
+                        },
+                        detections = uiState.detections,
+                        inferenceTime = uiState.inferenceTime,
+                        cameraExecutor = cameraExecutor
+                    )
+                } else {
+                    PermissionDeniedScreen()
+                }
 
-                    Text(text = "카메라 권한을 허용해주세요.")
+                // 에러 메시지 오버레이
+                uiState.errorMessage?.let { message ->
+                    AnimatedVisibility(
+                        visible = true, // 항상 보이게
+                        enter = fadeIn(), exit = fadeOut()
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .align(Alignment.TopCenter),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = message,
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                modifier = Modifier.padding(12.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -52,7 +91,7 @@ class MainActivity : ComponentActivity() {
                 this,
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED -> {
-                isCameraPermissionGranted = true
+                viewModel.onCameraPermissionResult(true)
             }
 
             else -> {
@@ -63,6 +102,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        cameraExecutor.shutdown()
+        if (::cameraExecutor.isInitialized) {
+            cameraExecutor.shutdown()
+        }
     }
 }

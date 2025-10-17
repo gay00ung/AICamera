@@ -1,14 +1,13 @@
 package net.lateinit.aicamera.ui.viewmodel
 
-import android.graphics.Bitmap
-import android.util.Log
+import android.graphics.*
+import android.util.*
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import net.lateinit.aicamera.domain.usecase.*
-import net.lateinit.aicamera.ui.*
+import net.lateinit.aicamera.ui.state.*
 import javax.inject.*
 
 @HiltViewModel
@@ -26,6 +25,11 @@ class MainViewModel @Inject constructor(
         observeErrors()
     }
 
+    // 카메라 권한 결과를 처리
+    fun onCameraPermissionResult(isGranted: Boolean) {
+        _uiState.value = _uiState.value.copy(isCameraPermissionGranted = isGranted)
+    }
+
     // AI 모델 초기화
     private fun setupDetector() {
         viewModelScope.launch {
@@ -35,6 +39,7 @@ class MainViewModel @Inject constructor(
                     scoreThreshold = 0.5f,
                     maxResults = 3
                 )
+                _uiState.value = _uiState.value.copy(isDetectorReady = true)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = "모델 설정 실패: ${e.message}")
             }
@@ -56,6 +61,9 @@ class MainViewModel @Inject constructor(
 
     // 카메라 프레임(Bitmap)을 받아 AI 분석 요청
     fun onBitmapAnalyzed(bitmap: Bitmap, rotation: Int) {
+        if (!_uiState.value.isDetectorReady) {
+            return
+        }
         viewModelScope.launch {
             detectObjectsUseCase(bitmap, rotation)
                 .flowOn(Dispatchers.Default) // AI 추론은 Default 스레드에서 실행
